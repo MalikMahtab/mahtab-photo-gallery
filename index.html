@@ -31,7 +31,7 @@
 <body>
 <nav class="menu-pill"><div style="display:flex;align-items:center;gap:10px"><div class="menu-dot"></div><div class="menu-logo">PHOTOGRAPHY</div></div><ul class="menu-links" id="menuLinks"><li><a href="index.html" class="active">GALLERY</a></li><li><a href="paid.html">PAID 4K 🔥</a></li><li><a href="about.html">ABOUT</a></li><li><a href="contact.html">CONTACT</a></li></ul><button class="hamburger" onclick="document.getElementById('menuLinks').classList.toggle('show')">☰</button></nav>
 
-<div class="gallery">
+<div class="gallery" id="mainGallery">
   <div class="pic" data-title="Golden Hour Pigeons Flight" data-location="📍 Multan" data-story="Flock of pigeons flying at golden hour in front of historic red building, symbol of peace and freedom">
   <img src="1.jpg" loading="lazy">
   <div class="wm">© MEHTAB</div>
@@ -64,16 +64,12 @@
     <button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button>
   </div>
 </div>
-  <!-- ISI TARAH BAAKI PICS COPY KARTE JAO -->
 </div>
 
-<!-- STORY MODAL -->
 <div id="storyModal" class="modal" onclick="this.classList.remove('show')"><div class="story-box" onclick="event.stopPropagation()"><img id="storyImg" src=""><div class="story-content"><h2 id="storyTitle"></h2><div class="meta" id="storyLoc"></div><p id="storyText"></p><button class="close-btn" onclick="document.getElementById('storyModal').classList.remove('show')">Close ✕</button></div></div></div>
 
-<!-- DOWNLOAD MODAL -->
 <div id="downModal" class="modal" onclick="this.classList.remove('show')"><div class="down-box" onclick="event.stopPropagation()"><p style="margin-bottom:15px;color:#888;font-size:12px;letter-spacing:2px">DOWNLOAD FREE</p><a href="#" id="smallL" download>Small - 800px</a><a href="#" id="medL" download>Medium - 1920px</a><p style="margin-top:20px;font-size:11px;color:#555;cursor:pointer" onclick="document.getElementById('downModal').classList.remove('show')">close</p></div></div>
 
-<!-- AUTO PAY MODAL - YE MAIN HAI -->
 <div id="payModal" class="modal" onclick="closePay()"><div class="pay-box" onclick="event.stopPropagation()">
 <h3 style="margin:0">Pay 5 PKR - Get 4K</h3>
 <p style="color:#aaa;font-size:12px;margin-top:10px">NayaPay / Easypaisa / JazzCash se is ID pe 5 PKR bhejo:</p>
@@ -99,16 +95,30 @@ function verifyAndDownload(){
   closePay();
   alert("Shukriya ❤️ Payment verify! 4K Download shuru ho gaya.");
 }
-    // ADMIN SE AAI PHOTOS
-  try{
-    const extra = JSON.parse(localStorage.getItem('mahtab_gallery') || '[]');
-    extra.forEach(item => {
-      const div = document.createElement('div');
-      div.className = 'pic';
-      div.innerHTML = `<img src="${item.img}" loading="lazy"><p>${item.title}</p><button onclick="openStory(this)">View</button>`;
-      document.querySelector('div').parentNode.appendChild(div);
-    });
-  }catch(e){}
+
+// ===== ADMIN SE ADDED PHOTOS - AUTO LOAD =====
+(function(){
+  let saved = JSON.parse(localStorage.getItem('mahtabGallery')||'[]');
+  let galleryDiv = document.getElementById('mainGallery');
+  saved.reverse().forEach(p=>{
+    let div = document.createElement('div');
+    div.className = 'pic';
+    div.dataset.title = p.title || 'Untitled';
+    div.dataset.location = '📍 ' + (p.caption || 'Multan');
+    div.dataset.story = p.caption || '';
+    div.innerHTML = `
+      <img src="${p.image}" loading="lazy">
+      <div class="wm">© MEHTAB</div>
+      <div class="pic-text"><h4>${p.title||'Untitled'}</h4><p>${p.caption||''}</p></div>
+      <div class="info">
+        <button onclick="openStory(this)">👁️</button>
+        <button onclick="openDown(this)">Free</button>
+        <button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button>
+      </div>
+    `;
+    galleryDiv.prepend(div);
+  });
+})();
 </script>
 </body>
 </html>
