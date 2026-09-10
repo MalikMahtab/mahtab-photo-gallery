@@ -26,6 +26,13 @@
 .footer-wrap{padding:60px 15px 30px;display:flex;justify-content:center}.footer-pill{background:rgba(18,18,18,0.9);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:20px 30px;max-width:800px;width:100%;display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px}
 .footer-left h3{font-size:14px;letter-spacing:2px}.footer-left p{font-size:11px;color:#777;margin-top:6px}.footer-right{display:flex;gap:10px}.footer-right a{width:38px;height:38px;background:#1e1e1e;border-radius:50%;display:flex;justify-content:center;align-items:center;text-decoration:none;color:#aaa}.footer-right a:hover{background:white;color:black}
 .footer-copy{width:100%;text-align:center;margin-top:15px;padding-top:15px;border-top:1px solid rgba(255,255,255,0.06);font-size:10px;color:#555}
+/* UNIQUE PREMIUM UPLOAD BUTTON - MAHTAB */
+.admin-upload-wrap{position:fixed;bottom:24px;right:20px;z-index:1001;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+#uploadStatus{background:rgba(20,20,20,0.9);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:10px 16px;border-radius:100px;font-size:11px;display:none;letter-spacing:0.5px}
+#realUpBtn{background:rgba(18,18,18,0.9);backdrop-filter:blur(25px);border:1px solid rgba(255,255,255,0.12);color:#fff;padding:11px 18px 11px 14px;border-radius:100px;font-weight:400;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:10px;letter-spacing:0.5px;transition:0.3s;box-shadow:0 10px 40px rgba(0,0,0,0.5)}
+#realUpBtn:hover{background:#fff;color:#000;transform:translateY(-2px)}
+#realUpBtn .up-icon{width:28px;height:28px;background:#fff;color:#000;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:14px;transition:0.3s}
+#realUpBtn:hover .up-icon{background:#000;color:#fff}
 </style>
 </head>
 <body>
@@ -63,6 +70,22 @@
 <script>
 const CLOUD_NAME = "n6wuj0io";
 const UPLOAD_PRESET = "mahtab_gallery";
+const ADMIN_PASSWORD = "861255";
+let isAdmin = sessionStorage.getItem('mahtab_admin') === 'true';
+
+function checkAdmin(){
+  if(isAdmin) return true;
+  let p = prompt("🔒 Admin Password (Mahtab only):");
+  if(p === ADMIN_PASSWORD){
+    isAdmin = true;
+    sessionStorage.setItem('mahtab_admin','true');
+    return true;
+  } else {
+    if(p !== null) alert("❌ Galat Password");
+    return false;
+  }
+}
+
 let current4k = "";
 function openStory(btn){let c=btn.closest('.pic');document.getElementById('storyImg').src=c.querySelector('img').src;document.getElementById('storyTitle').innerText=c.dataset.title;document.getElementById('storyLoc').innerText=c.dataset.location;document.getElementById('storyText').innerText=c.dataset.story;document.getElementById('storyModal').classList.add('show');}
 function openDown(btn){let src=btn.closest('.pic').querySelector('img').src;document.getElementById('smallL').href=src;document.getElementById('medL').href=src;document.getElementById('downModal').classList.add('show');}
@@ -88,13 +111,17 @@ function verifyAndDownload(){
     galleryDiv.prepend(div);
   });
 })();
-// CLOUDINARY UPLOAD BUTTON
+// CLOUDINARY UPLOAD BUTTON - SECURED
 const cloudInput = document.createElement('input');
 cloudInput.type = 'file'; cloudInput.id = 'cloudFile'; cloudInput.accept = 'image/*'; cloudInput.multiple = true; cloudInput.style.display = 'none'; document.body.appendChild(cloudInput);
 const upBtn = document.createElement('div');
-upBtn.innerHTML = `<div id="uploadStatus" style="background:#00ff88;color:#000;padding:8px 14px;border-radius:100px;font-size:11px;display:none;font-weight:600;margin-bottom:8px"></div><button id="realUpBtn" style="background:#00ff88;color:#000;border:none;padding:14px 22px;border-radius:100px;font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 10px 30px rgba(0,255,136,0.3)">+ UPLOAD NEW PHOTO</button>`;
-upBtn.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:1001;display:flex;flex-direction:column;align-items:flex-end'; document.body.appendChild(upBtn);
-document.getElementById('realUpBtn').onclick = ()=> cloudInput.click();
+upBtn.className = 'admin-upload-wrap';
+upBtn.innerHTML = `<div id="uploadStatus"></div><button id="realUpBtn"><span class="up-icon">↗</span> UPLOAD</button>`;
+document.body.appendChild(upBtn);
+document.getElementById('realUpBtn').onclick = ()=> {
+  if(!checkAdmin()) return;
+  cloudInput.click();
+};
 cloudInput.addEventListener('change', async (e)=>{
   for(let file of [...e.target.files]){ await uploadToCloudinary(file); }
 });
