@@ -99,6 +99,16 @@ function verifyAndDownload(){
   closePay();
   alert("Shukriya ❤️ Payment verify! 4K Download shuru ho gaya.");
 }
+    // ADMIN SE AAI PHOTOS
+  try{
+    const extra = JSON.parse(localStorage.getItem('mahtab_gallery') || '[]');
+    extra.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'pic';
+      div.innerHTML = `<img src="${item.img}" loading="lazy"><p>${item.title}</p><button onclick="openStory(this)">View</button>`;
+      document.querySelector('div').parentNode.appendChild(div);
+    });
+  }catch(e){}
 </script>
 </body>
 </html>
