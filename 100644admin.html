@@ -1,1 +1,99 @@
-<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1"><title>Admin - Mahtab</title><style>body{font-family:Arial;background:#111;color:#fff;padding:20px;text-align:center}input,button{padding:12px;margin:8px;width:90%;max-width:400px;border-radius:8px;border:none}button{background:#7c3aed;color:#fff;font-weight:bold}.card{background:#1f1f1f;padding:15px;border-radius:12px;margin:15px auto;max-width:400px}img{width:100%;border-radius:10px}</style></head><body><div id="login"><h2>🔐 Admin Login</h2><input type="password" id="pass" placeholder="Password"><br><button onclick="login()">Login</button><p style="font-size:12px;color:#888">Pass: mahtab123</p></div><div id="panel" style="display:none"><h2>📸 Photo Add Karo</h2><input type="file" id="imgFile" accept="image/*"><br><input type="text" id="title" placeholder="Title"><br><button onclick="addPhoto()">Add to Gallery</button><div id="preview"></div><p><a href="index.html" style="color:#7c3aed">← Gallery Dekho</a></p></div><script>function login(){if(document.getElementById('pass').value==='mahtab123'){document.getElementById('login').style.display='none';document.getElementById('panel').style.display='block';}else alert('Galat Password');}function addPhoto(){const f=document.getElementById('imgFile').files[0];const t=document.getElementById('title').value||'Mahtab Photo';if(!f){alert('Photo select karo');return;}const r=new FileReader();r.onload=function(e){let g=JSON.parse(localStorage.getItem('mahtab_gallery')||'[]');g.push({img:e.target.result,title:t});localStorage.setItem('mahtab_gallery',JSON.stringify(g));document.getElementById('preview').innerHTML=`<div class="card"><img src="${e.target.result}"><p>${t}</p><p style="color:lightgreen">✅ Ho gayi Add!</p></div>`;};r.readAsDataURL(f);}</script></body></html>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel - Mahtab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family:Arial;background:#111;color:#fff;padding:20px;max-width:600px;margin:auto}
+input,button{padding:12px;margin:6px 0;width:100%;box-sizing:border-box;border-radius:10px;border:1px solid #333;background:#1a1a1a;color:#fff;outline:none}
+button{background:#7c3aed;color:#fff;border:none;cursor:pointer;font-weight:bold}
+#loginBox{margin-top:80px;text-align:center}
+#mainBox{display:none}
+#preview img{width:100%;max-width:350px;margin-top:10px;border-radius:12px;display:block}
+.code-box{background:#222;padding:12px;margin-top:20px;word-break:break-all;border-radius:10px;font-size:13px;color:#aaa}
+.list img{width:60px;height:60px;object-fit:cover;border-radius:8px}
+.list-item{display:flex;gap:10px;align-items:center;background:#1a1a1a;padding:8px;border-radius:10px;margin:8px 0;justify-content:space-between}
+.del{width:auto;background:#ef4444;padding:6px 12px;font-size:12px}
+</style>
+</head>
+<body>
+
+<div id="loginBox">
+<h2>🔒 Admin Login</h2>
+<input type="password" id="pass" placeholder="Password likho">
+<button onclick="checkPass()">Login</button>
+<p style="color:#666;font-size:12px;margin-top:10px">Password: 861255</p>
+</div>
+
+<div id="mainBox">
+<h2>📸 Mahtab Gallery - Admin Panel</h2>
+<input type="file" id="imgFile" accept="image/*"><br>
+<input type="text" id="title" placeholder="Photo ka Title - e.g. Golden Hour Pigeons"><br>
+<input type="text" id="caption" placeholder="Caption / Location - e.g. Multan - Peaceful morning"><br>
+<button onclick="addPhoto()">Add Photo to Gallery</button>
+
+<div id="preview"></div>
+<div id="output" class="code-box">Abhi koi nayi photo add nahi hui.</div>
+
+<h3 style="margin-top:30px">Saved Photos (Is mobile me)</h3>
+<div id="savedList"></div>
+<br>
+<a href="index.html" style="color:#7c3aed;text-decoration:none">← Gallery Dekho</a>
+</div>
+
+<script>
+const ADMIN_PASS = "861255";
+function checkPass(){
+  if(document.getElementById('pass').value === ADMIN_PASS){
+    document.getElementById('loginBox').style.display='none';
+    document.getElementById('mainBox').style.display='block';
+    showSaved();
+  } else {
+    alert("Ghalat Password Mahtab bhai!");
+  }
+}
+
+function addPhoto(){
+  const file = document.getElementById('imgFile').files[0];
+  const title = document.getElementById('title').value || 'Mahtab Photo';
+  const caption = document.getElementById('caption').value || 'Multan';
+  if(!file){ alert('Pehle photo select karo'); return; }
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const imgData = e.target.result;
+    // Yahi key main gallery padhti hai - mahtabGallery
+    let gallery = JSON.parse(localStorage.getItem('mahtabGallery') || '[]');
+    gallery.push({image: imgData, title: title, caption: caption});
+    localStorage.setItem('mahtabGallery', JSON.stringify(gallery));
+
+    document.getElementById('preview').innerHTML = `<p>Ho gaya! ✅</p><img src="${imgData}"><p><b>Title:</b> ${title}<br><b>Caption:</b> ${caption}</p>`;
+    document.getElementById('output').innerHTML = `Photo save ho gayi! Ab <b>index.html</b> refresh karo, ye sab se upar aa jayegi.`;
+    document.getElementById('title').value='';
+    document.getElementById('caption').value='';
+    showSaved();
+  }
+  reader.readAsDataURL(file);
+}
+
+function showSaved(){
+  let gallery = JSON.parse(localStorage.getItem('mahtabGallery') || '[]');
+  let html = '';
+  if(gallery.length==0) html='<p style="color:#666">Koi photo save nahi</p>';
+  gallery.slice().reverse().forEach((p,i)=>{
+    let realIndex = gallery.length-1-i;
+    html+=`<div class="list-item"><div style="display:flex;gap:10px;align-items:center"><img src="${p.image}"><div><b style="font-size:13px">${p.title}</b><br><span style="font-size:11px;color:#888">${p.caption}</span></div></div><button class="del" onclick="delPhoto(${realIndex})">Delete</button></div>`;
+  });
+  document.getElementById('savedList').innerHTML = html;
+}
+
+function delPhoto(index){
+  if(!confirm("Delete kar dun?")) return;
+  let gallery = JSON.parse(localStorage.getItem('mahtabGallery') || '[]');
+  gallery.splice(index,1);
+  localStorage.setItem('mahtabGallery', JSON.stringify(gallery));
+  showSaved();
+}
+</script>
+</body>
+</html>
