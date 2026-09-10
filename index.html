@@ -42,28 +42,6 @@
     <button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button>
   </div>
 </div>
-  
-  <div class="pic" data-title="G" data-location="📍 Multan" data-story="">
-  <img src=".jpg" loading="lazy">
-  <div class="wm">© MEHTAB</div>
-  <div class="pic-text"><h4>G</h4><p>Multan</p></div>
-  <div class="info">
-    <button onclick="openStory(this)">👁️</button>
-    <button onclick="openDown(this)">Free</button>
-    <button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button>
-  </div>
-</div>
-  
-  <div class="pic" data-title="G" data-location="📍 Multan" data-story="">
-  <img src=".jpg" loading="lazy">
-  <div class="wm">© MEHTAB</div>
-  <div class="pic-text"><h4>G</h4><p>Multan</p></div>
-  <div class="info">
-    <button onclick="openStory(this)">👁️</button>
-    <button onclick="openDown(this)">Free</button>
-    <button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button>
-  </div>
-</div>
 </div>
 
 <div id="storyModal" class="modal" onclick="this.classList.remove('show')"><div class="story-box" onclick="event.stopPropagation()"><img id="storyImg" src=""><div class="story-content"><h2 id="storyTitle"></h2><div class="meta" id="storyLoc"></div><p id="storyText"></p><button class="close-btn" onclick="document.getElementById('storyModal').classList.remove('show')">Close ✕</button></div></div></div>
@@ -83,10 +61,8 @@
 <div class="footer-wrap"><div class="footer-pill"><div class="footer-left"><h3>MAHTAB AWAN</h3><p>Photographer • 100% Original Work</p></div><div class="footer-right"><a href="mailto:mahtabawan03@gmail.com">✉️</a><a href="tel:03249587706">📞</a><a href="#">IG</a></div><div class="footer-copy">© 2026 MAHTAB PHOTO GALLERY• All shots taken by me</div></div></div>
 
 <script>
-// ===== CLOUDINARY CONFIG - AAPKA ===
 const CLOUD_NAME = "n6wuj0io";
 const UPLOAD_PRESET = "mahtab_gallery";
-
 let current4k = "";
 function openStory(btn){let c=btn.closest('.pic');document.getElementById('storyImg').src=c.querySelector('img').src;document.getElementById('storyTitle').innerText=c.dataset.title;document.getElementById('storyLoc').innerText=c.dataset.location;document.getElementById('storyText').innerText=c.dataset.story;document.getElementById('storyModal').classList.add('show');}
 function openDown(btn){let src=btn.closest('.pic').querySelector('img').src;document.getElementById('smallL').href=src;document.getElementById('medL').href=src;document.getElementById('downModal').classList.add('show');}
@@ -99,8 +75,6 @@ function verifyAndDownload(){
   closePay();
   alert("Shukriya ❤️ Payment verify! 4K Download shuru ho gaya.");
 }
-
-// ===== AAPKA PURANA ADMIN CODE - SAME TO SAME ===
 (function(){
   let saved = JSON.parse(localStorage.getItem('mahtabGallery')||'[]');
   let galleryDiv = document.getElementById('mainGallery');
@@ -110,77 +84,34 @@ function verifyAndDownload(){
     div.dataset.title = p.title || 'New Photo';
     div.dataset.location = p.location || '📍 Multan';
     div.dataset.story = p.story || '';
-    div.innerHTML = `
-      <img src="${p.url || p.src}" loading="lazy">
-      <div class="wm">© MEHTAB</div>
-      <div class="pic-text"><h4>${p.title || 'New Photo'}</h4><p>Multan</p></div>
-      <div class="info">
-        <button onclick="openStory(this)">👁️</button>
-        <button onclick="openDown(this)">Free</button>
-        <button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button>
-      </div>`;
+    div.innerHTML = `<img src="${p.url || p.src}" loading="lazy"><div class="wm">© MEHTAB</div><div class="pic-text"><h4>${p.title || 'New Photo'}</h4><p>Multan</p></div><div class="info"><button onclick="openStory(this)">👁️</button><button onclick="openDown(this)">Free</button><button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button></div>`;
     galleryDiv.prepend(div);
   });
 })();
-
-// ===== NAYA CLOUDINARY UPLOAD - SIRF YEH ADD KIYA HAI ===
+// CLOUDINARY UPLOAD BUTTON
 const cloudInput = document.createElement('input');
-cloudInput.type = 'file';
-cloudInput.id = 'cloudFile';
-cloudInput.accept = 'image/*';
-cloudInput.multiple = true;
-cloudInput.style.display = 'none';
-document.body.appendChild(cloudInput);
-
+cloudInput.type = 'file'; cloudInput.id = 'cloudFile'; cloudInput.accept = 'image/*'; cloudInput.multiple = true; cloudInput.style.display = 'none'; document.body.appendChild(cloudInput);
 const upBtn = document.createElement('div');
-upBtn.innerHTML = `<div id="uploadStatus" style="background:#00ff88;color:#000;padding:8px 14px;border-radius:100px;font-size:11px;display:none;font-weight:600;margin-bottom:8px"></div>
-<button id="realUpBtn" style="background:#00ff88;color:#000;border:none;padding:14px 22px;border-radius:100px;font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 10px 30px rgba(0,255,136,0.3)">+ UPLOAD NEW PHOTO</button>`;
-upBtn.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:1001;display:flex;flex-direction:column;align-items:flex-end';
-document.body.appendChild(upBtn);
-
+upBtn.innerHTML = `<div id="uploadStatus" style="background:#00ff88;color:#000;padding:8px 14px;border-radius:100px;font-size:11px;display:none;font-weight:600;margin-bottom:8px"></div><button id="realUpBtn" style="background:#00ff88;color:#000;border:none;padding:14px 22px;border-radius:100px;font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 10px 30px rgba(0,255,136,0.3)">+ UPLOAD NEW PHOTO</button>`;
+upBtn.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:1001;display:flex;flex-direction:column;align-items:flex-end'; document.body.appendChild(upBtn);
 document.getElementById('realUpBtn').onclick = ()=> cloudInput.click();
-
 cloudInput.addEventListener('change', async (e)=>{
-  const files = [...e.target.files];
-  for(let file of files){
-    await uploadToCloudinary(file);
-  }
+  for(let file of [...e.target.files]){ await uploadToCloudinary(file); }
 });
-
 async function uploadToCloudinary(file){
-  const status = document.getElementById('uploadStatus');
-  status.style.display='block';
-  status.textContent = 'Uploading ' + file.name + '...';
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('upload_preset', UPLOAD_PRESET);
-  formData.append('folder', 'mahtab_gallery');
+  const status = document.getElementById('uploadStatus'); status.style.display='block'; status.textContent = 'Uploading ' + file.name + '...';
+  const fd = new FormData(); fd.append('file', file); fd.append('upload_preset', UPLOAD_PRESET); fd.append('folder', 'mahtab_gallery');
   try{
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method:'POST', body:formData });
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method:'POST', body:fd });
     const data = await res.json();
     if(data.secure_url){
-      // gallery me dikhao
-      let div = document.createElement('div');
-      div.className = 'pic';
-      div.dataset.title = file.name;
-      div.dataset.location = '📍 Multan';
-      div.dataset.story = 'Uploaded via Cloudinary';
+      let div = document.createElement('div'); div.className = 'pic'; div.dataset.title = file.name; div.dataset.location = '📍 Multan'; div.dataset.story = 'Uploaded via Cloudinary';
       div.innerHTML = `<img src="${data.secure_url}" loading="lazy"><div class="wm">© MEHTAB</div><div class="pic-text"><h4>${file.name}</h4><p>Multan</p></div><div class="info"><button onclick="openStory(this)">👁️</button><button onclick="openDown(this)">Free</button><button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button></div>`;
       document.getElementById('mainGallery').prepend(div);
-      
-      // local storage me save taake reload pe bhi rahe
-      let old = JSON.parse(localStorage.getItem('mahtabGallery')||'[]');
-      old.push({url:data.secure_url, title:file.name, location:'📍 Multan', story:'Uploaded via Cloudinary'});
-      localStorage.setItem('mahtabGallery', JSON.stringify(old));
-
-      status.textContent = 'Uploaded! ✅';
-      setTimeout(()=>status.style.display='none',2000);
-    } else {
-      status.textContent = 'Error: ' + data.error.message;
-    }
-  }catch(err){
-    document.getElementById('uploadStatus').textContent = 'Failed';
-  }
+      let old = JSON.parse(localStorage.getItem('mahtabGallery')||'[]'); old.push({url:data.secure_url, title:file.name, location:'📍 Multan', story:'Uploaded via Cloudinary'}); localStorage.setItem('mahtabGallery', JSON.stringify(old));
+      status.textContent = 'Uploaded! ✅'; setTimeout(()=>status.style.display='none',2000);
+    } else { status.textContent = 'Error: ' + data.error.message; }
+  }catch(err){ document.getElementById('uploadStatus').textContent = 'Failed'; }
 }
 </script>
 </body>
