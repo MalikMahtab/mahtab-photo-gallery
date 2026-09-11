@@ -40,6 +40,23 @@
 #realUpBtn .up-icon{width:26px;height:26px;background:#fff;color:#000;border-radius:50%;display:flex;justify-content:center;align-items:center}
 </style>
 </head>
+
+<script>
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('dragstart', e => e.preventDefault());
+</script>
+
+<style>
+  img {
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    pointer-events: none !important;
+  }
+</style>
+
+</body>
+</html>
 <body>
 <nav class="menu-pill"><div style="display:flex;align-items:center;gap:10px"><div class="menu-dot"></div><div class="menu-logo">PHOTOGRAPHY</div></div><ul class="menu-links" id="menuLinks"><li><a href="index.html" class="active">GALLERY</a></li><li><a href="paid.html">PAID 4K 🔥</a></li><li><a href="about.html">ABOUT</a></li><li><a href="contact.html">CONTACT</a></li></ul><button class="hamburger" onclick="document.getElementById('menuLinks').classList.toggle('show')">☰</button></nav>
 
