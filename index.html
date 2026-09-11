@@ -10,7 +10,7 @@
 .menu-logo{font-size:13px;letter-spacing:3px;font-weight:600}.menu-links{display:flex;gap:6px;list-style:none}.menu-links a{color:#888;text-decoration:none;font-size:12px;padding:7px 14px;border-radius:100px;transition:0.3s}.menu-links a.active,.menu-links a:hover{background:white;color:black}.menu-dot{width:8px;height:8px;background:#00ff88;border-radius:50%}.hamburger{display:none;background:white;color:black;border:none;width:34px;height:34px;border-radius:50%;cursor:pointer}
 @media(max-width:650px){.menu-pill{width:92%;justify-content:space-between}.menu-links{display:none;position:absolute;top:55px;left:0;width:100%;background:rgba(15,15,15,0.95);border-radius:20px;flex-direction:column;padding:15px}.menu-links.show{display:flex}.hamburger{display:block}}
 .gallery{column-count:3;column-gap:12px;padding:90px 12px 40px;max-width:1600px;margin:auto}@media(max-width:900px){.gallery{column-count:2}}@media(max-width:500px){.gallery{column-count:1}}
-.pic{position:relative;margin-bottom:12px;border-radius:18px;overflow:hidden;break-inside:avoid;background:#111;cursor:pointer}
+.pic{position:relative;margin-bottom:20px;border-radius:18px;overflow:hidden;break-inside:avoid;background:#111;cursor:pointer}
 .pic img{width:100%;display:block;transition:0.6s}
 .pic:hover img{transform:scale(1.08);filter:brightness(0.35) blur(1px)}
 .pic.active img{transform:scale(1.08);filter:brightness(0.35) blur(1px)}
@@ -20,16 +20,17 @@
 .pic:hover.info{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:all}
 .pic.active.pic-text{opacity:1}
 .pic-text h4{font-size:13px;letter-spacing:1px}.pic-text p{font-size:11px;color:#aaa}
-
-/* NAYA UNIQUE DESIGN */
-.info{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.8);background:rgba(0,0,0,0.6);backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.15);padding:10px 12px;border-radius:100px;display:flex;gap:6px;opacity:0;transition:0.4s;pointer-events:none;z-index:3;align-items:center;flex-direction:column;width:90%}
-.stats-row{display:flex;gap:8px;justify-content:center;width:100%}
-.info button{background:white;color:black;border:none;padding:8px 12px;border-radius:100px;cursor:pointer;font-size:11px;font-weight:600}
-.paid-btn{background:#00ff88!important;color:#000!important;padding:8px 14px;border-radius:100px;font-size:11px;font-weight:700;text-decoration:none;border:none;cursor:pointer}
-.like-btn{background:#ff3c00!important;color:white!important}
-.like-btn:disabled{opacity:0.5;cursor:not-allowed}
-.stats-text{font-size:10px;color:#ddd;display:flex;gap:12px;margin-top:5px}
+.info{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.8);background:rgba(0,0,0,0.6);backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.15);padding:10px 12px;border-radius:100px;display:flex;gap:6px;opacity:0;transition:0.4s;pointer-events:none;z-index:3;align-items:center}
 .pic.active.info{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:all}
+.info button{background:white;color:black;border:none;padding:8px 12px;border-radius:100px;cursor:pointer;font-size:11px;font-weight:600}.paid-btn{background:#00ff88!important;color:#000!important;padding:8px 14px;border-radius:100px;font-size:11px;font-weight:700;text-decoration:none;border:none;cursor:pointer}
+
+/* NAYA UNIQUE LIKE VIEW BAR */
+.stats-bar{background:linear-gradient(90deg, rgba(20,20,20,0.9), rgba(30,30,30,0.9));backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.08);padding:10px 15px;display:flex;justify-content:space-between;align-items:center;border-radius:0 0 18px 18px;margin-top:-5px}
+.stats-left{display:flex;gap:15px;align-items:center;font-size:12px;color:#aaa}
+.like-btn-new{background:rgba(255,60,0,0.15);color:#ff3c00;border:1px solid rgba(255,60,0,0.3);padding:6px 14px;border-radius:100px;cursor:pointer;font-size:11px;font-weight:600;transition:0.3s}
+.like-btn-new:hover{background:#ff3c00;color:white}
+.like-btn-new:disabled{background:#333;color:#666;border-color:#444;cursor:not-allowed}
+.view-text{color:#00ff88;font-weight:600}
 
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);backdrop-filter:blur(20px);z-index:9999;justify-content:center;align-items:center;padding:15px}.modal.show{display:flex}
 .story-box{background:#111;border:1px solid #222;border-radius:24px;max-width:750px;width:100%;overflow:hidden;display:grid;grid-template-columns:1.2fr 1fr}@media(max-width:650px){.story-box{grid-template-columns:1fr}}
@@ -104,12 +105,26 @@ document.addEventListener('error', function(e){
   saved = saved.filter(p => p.url && p.url.startsWith('http'));
   localStorage.setItem('mahtabGallery', JSON.stringify(saved));
   saved.reverse().forEach((p, index)=>{
-    let div = document.createElement('div'); div.className = 'pic';
+    let div = document.createElement('div');
     let photoId = 'photo_' + index;
     div.dataset.id = photoId;
-    div.dataset.title = p.title; div.dataset.location = p.location; div.dataset.story = p.story;
-    // YAHAN UNIQUE DESIGN LAGAYA
-    div.innerHTML = `<img src="${p.url}" loading="lazy" onerror="this.closest('.pic').remove()"><div class="wm">© MEHTAB</div><div class="pic-text"><h4>${p.title}</h4><p>${p.location}</p></div><div class="info"><div class="stats-row"><button onclick="openStory(this)">👁️ Story</button><button onclick="openDown(this)">Free</button><button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button></div><div class="stats-row"><button class="like-btn" onclick="handleLike('${photoId}', this)">❤️ <span class="like-count">0</span></button><span class="stats-text">👀 <span class="view-count">0</span></span></div></div>`;
+    div.innerHTML = `
+    <div class="pic" data-id="${photoId}" data-title="${p.title}" data-location="${p.location}" data-story="${p.story}">
+      <img src="${p.url}" loading="lazy" onerror="this.closest('.pic').remove()">
+      <div class="wm">© MEHTAB</div>
+      <div class="pic-text"><h4>${p.title}</h4><p>${p.location}</p></div>
+      <div class="info">
+        <button onclick="openStory(this)">👁️ Story</button>
+        <button onclick="openDown(this)">Free</button>
+        <button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button>
+      </div>
+    </div>
+    <div class="stats-bar">
+      <div class="stats-left">
+        <button class="like-btn-new" onclick="handleLike('${photoId}', this)">❤️ Like <span class="like-count">0</span></button>
+        <span>👀 Views: <span class="view-count">0</span></span>
+      </div>
+    </div>`;
     galleryDiv.prepend(div);
   });
 })();
@@ -125,11 +140,27 @@ async function uploadToCloudinary(file, meta){
   try{ const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method:'POST', body:fd }); const data = await res.json();
     if(data.secure_url){
       let photoId = 'photo_' + Date.now();
-      let div = document.createElement('div'); div.className = 'pic';
-      div.dataset.id = photoId;
-      div.dataset.title = meta.title; div.dataset.location = meta.location; div.dataset.story = meta.story;
-      div.innerHTML = `<img src="${data.secure_url}" loading="lazy" onerror="this.closest('.pic').remove()"><div class="wm">© MEHTAB</div><div class="pic-text"><h4>${meta.title}</h4><p>${meta.location}</p></div><div class="info"><div class="stats-row"><button onclick="openStory(this)">👁️ Story</button><button onclick="openDown(this)">Free</button><button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button></div><div class="stats-row"><button class="like-btn" onclick="handleLike('${photoId}', this)">❤️ <span class="like-count">0</span></button><span class="stats-text">👀 <span class="view-count">0</span></span></div></div>`;
-      document.getElementById('mainGallery').prepend(div); let old = JSON.parse(localStorage.getItem('mahtabGallery')||'[]'); old.push({url:data.secure_url, title:meta.title, location:meta.location, story:meta.story}); localStorage.setItem('mahtabGallery', JSON.stringify(old)); status.textContent = 'Uploaded! ✅'; setTimeout(()=>status.style.display='none',2000);
+      let div = document.createElement('div');
+      div.innerHTML = `
+      <div class="pic" data-id="${photoId}" data-title="${meta.title}" data-location="${meta.location}" data-story="${meta.story}">
+        <img src="${data.secure_url}" loading="lazy" onerror="this.closest('.pic').remove()">
+        <div class="wm">© MEHTAB</div>
+        <div class="pic-text"><h4>${meta.title}</h4><p>${meta.location}</p></div>
+        <div class="info">
+          <button onclick="openStory(this)">👁️ Story</button>
+          <button onclick="openDown(this)">Free</button>
+          <button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button>
+        </div>
+      </div>
+      <div class="stats-bar">
+        <div class="stats-left">
+          <button class="like-btn-new" onclick="handleLike('${photoId}', this)">❤️ Like <span class="like-count">0</span></button>
+          <span>👀 Views: <span class="view-count">0</span></span>
+        </div>
+      </div>`;
+      document.getElementById('mainGallery').prepend(div.firstChild);
+      document.getElementById('mainGallery').prepend(div.lastChild);
+      let old = JSON.parse(localStorage.getItem('mahtabGallery')||'[]'); old.push({url:data.secure_url, title:meta.title, location:meta.location, story:meta.story}); localStorage.setItem('mahtabGallery', JSON.stringify(old)); status.textContent = 'Uploaded! ✅'; setTimeout(()=>status.style.display='none',2000);
     }
   }catch(err){ status.textContent = 'Failed'; }
 }
@@ -166,15 +197,15 @@ async function uploadToCloudinary(file, meta){
       runTransaction(viewRef, (current) => { return (current || 0) + 1; });
 
       onValue(likeRef, (snapshot) => {
-        pic.querySelector('.like-count').innerText = snapshot.val() || 0;
+        pic.parentElement.querySelector('.like-count').innerText = snapshot.val() || 0;
       });
       onValue(viewRef, (snapshot) => {
-        pic.querySelector('.view-count').innerText = snapshot.val() || 0;
+        pic.parentElement.querySelector('.view-count').innerText = snapshot.val() || 0;
       });
       onValue(userLikeRef, (snapshot) => {
         if(snapshot.val() === true){
-          const btn = pic.querySelector('.like-btn');
-          btn.innerHTML = `❤️ Liked <span class="like-count">${pic.querySelector('.like-count').innerText}</span>`;
+          const btn = pic.parentElement.querySelector('.like-btn-new');
+          btn.innerHTML = `❤️ Liked <span class="like-count">${pic.parentElement.querySelector('.like-count').innerText}</span>`;
           btn.disabled = true;
         }
       });
