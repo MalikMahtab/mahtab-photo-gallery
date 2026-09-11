@@ -120,5 +120,47 @@ async function uploadToCloudinary(file, meta){
   }catch(err){ status.textContent = 'Failed'; }
 }
 </script>
+  <style>
+.img-container { margin-bottom: 20px; }
+.stats { display: flex; gap: 15px; margin-top: 8px; font-size: 15px; }
+.stats button { border: none; background: #f1f1f1; padding: 5px 10px; border-radius: 8px; cursor: pointer; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Sab img ko wrap kar do
+  document.querySelectorAll('img').forEach((img, index) => {
+    
+    // Har img ke liye unique id
+    let imgId = 'img_' + index;
+    img.id = imgId;
+
+    // View count
+    let views = localStorage.getItem('views_' + imgId) || 0;
+    views++;
+    localStorage.setItem('views_' + imgId, views);
+
+    // Like count
+    let likes = localStorage.getItem('likes_' + imgId) || 0;
+
+    // Stats ka div bana ke img ke baad laga do
+    let statsDiv = document.createElement('div');
+    statsDiv.className = 'stats';
+    statsDiv.innerHTML = `
+      <button onclick="addLike('${imgId}', this)">❤️ Like <span>${likes}</span></button>
+      <span>👁️ Views: <span>${views}</span></span>
+    `;
+    img.parentNode.insertBefore(statsDiv, img.nextSibling);
+  });
+});
+
+// Like function
+function addLike(imgId, btn){
+  let span = btn.querySelector('span');
+  let likes = parseInt(span.innerText) + 1;
+  span.innerText = likes;
+  localStorage.setItem('likes_' + imgId, likes);
+}
+</script>
 </body>
 </html>
