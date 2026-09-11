@@ -20,15 +20,16 @@
 .pic:hover.info{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:all}
 .pic.active.pic-text{opacity:1}
 .pic-text h4{font-size:13px;letter-spacing:1px}.pic-text p{font-size:11px;color:#aaa}
-.info{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.8);background:rgba(0,0,0,0.6);backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.15);padding:10px 12px;border-radius:100px;display:flex;gap:6px;opacity:0;transition:0.4s;pointer-events:none;z-index:3;align-items:center}
-/*.pic:hover.info{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:all}*/
-.pic.active.info{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:all}
-.info button{background:white;color:black;border:none;padding:8px 12px;border-radius:100px;cursor:pointer;font-size:11px;font-weight:600}.paid-btn{background:#00ff88!important;color:#000!important;padding:8px 14px;border-radius:100px;font-size:11px;font-weight:700;text-decoration:none;border:none;cursor:pointer}
 
-/* NAYA: Like View Count ka style */
-.like-view-count{font-size:11px;color:#ddd;display:flex;gap:8px;align-items:center}
-.like-btn{background:white;color:black;border:none;padding:8px 12px;border-radius:100px;cursor:pointer;font-size:11px;font-weight:600}
+/* NAYA UNIQUE DESIGN */
+.info{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.8);background:rgba(0,0,0,0.6);backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.15);padding:10px 12px;border-radius:100px;display:flex;gap:6px;opacity:0;transition:0.4s;pointer-events:none;z-index:3;align-items:center;flex-direction:column;width:90%}
+.stats-row{display:flex;gap:8px;justify-content:center;width:100%}
+.info button{background:white;color:black;border:none;padding:8px 12px;border-radius:100px;cursor:pointer;font-size:11px;font-weight:600}
+.paid-btn{background:#00ff88!important;color:#000!important;padding:8px 14px;border-radius:100px;font-size:11px;font-weight:700;text-decoration:none;border:none;cursor:pointer}
+.like-btn{background:#ff3c00!important;color:white!important}
 .like-btn:disabled{opacity:0.5;cursor:not-allowed}
+.stats-text{font-size:10px;color:#ddd;display:flex;gap:12px;margin-top:5px}
+.pic.active.info{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:all}
 
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);backdrop-filter:blur(20px);z-index:9999;justify-content:center;align-items:center;padding:15px}.modal.show{display:flex}
 .story-box{background:#111;border:1px solid #222;border-radius:24px;max-width:750px;width:100%;overflow:hidden;display:grid;grid-template-columns:1.2fr 1fr}@media(max-width:650px){.story-box{grid-template-columns:1fr}}
@@ -100,14 +101,15 @@ document.addEventListener('error', function(e){
 (function(){
   let saved = JSON.parse(localStorage.getItem('mahtabGallery')||'[]');
   let galleryDiv = document.getElementById('mainGallery');
-  // Clean old broken data
   saved = saved.filter(p => p.url && p.url.startsWith('http'));
   localStorage.setItem('mahtabGallery', JSON.stringify(saved));
   saved.reverse().forEach((p, index)=>{
     let div = document.createElement('div'); div.className = 'pic';
-    let photoId = 'photo_' + index; // Har photo ki unique ID
-    div.dataset.title = p.title; div.dataset.location = p.location; div.dataset.story = p.story; div.dataset.id = photoId;
-    div.innerHTML = `<img src="${p.url}" loading="lazy" onerror="this.closest('.pic').remove()"><div class="wm">© MEHTAB</div><div class="pic-text"><h4>${p.title}</h4><p>${p.location}</p></div><div class="info"><button onclick="openStory(this)">👁️</button><button onclick="openDown(this)">Free</button><button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button></div><div class="like-view-count" style="padding:10px"><button class="like-btn" onclick="handleLike('${photoId}', this)">👍 Like <span class="like-count">0</span></button> 👀 Views: <span class="view-count">0</span></div>`;
+    let photoId = 'photo_' + index;
+    div.dataset.id = photoId;
+    div.dataset.title = p.title; div.dataset.location = p.location; div.dataset.story = p.story;
+    // YAHAN UNIQUE DESIGN LAGAYA
+    div.innerHTML = `<img src="${p.url}" loading="lazy" onerror="this.closest('.pic').remove()"><div class="wm">© MEHTAB</div><div class="pic-text"><h4>${p.title}</h4><p>${p.location}</p></div><div class="info"><div class="stats-row"><button onclick="openStory(this)">👁️ Story</button><button onclick="openDown(this)">Free</button><button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button></div><div class="stats-row"><button class="like-btn" onclick="handleLike('${photoId}', this)">❤️ <span class="like-count">0</span></button><span class="stats-text">👀 <span class="view-count">0</span></span></div></div>`;
     galleryDiv.prepend(div);
   });
 })();
@@ -122,12 +124,12 @@ async function uploadToCloudinary(file, meta){
   const fd = new FormData(); fd.append('file', file); fd.append('upload_preset', UPLOAD_PRESET); fd.append('folder', 'mahtab_gallery');
   try{ const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method:'POST', body:fd }); const data = await res.json();
     if(data.secure_url){
-      let photoId = 'photo_' + Date.now(); // Nayi photo ki unique ID
+      let photoId = 'photo_' + Date.now();
       let div = document.createElement('div'); div.className = 'pic';
-      div.dataset.title = meta.title; div.dataset.location = meta.location; div.dataset.story = meta.story; div.dataset.id = photoId;
-      div.innerHTML = `<img src="${data.secure_url}" loading="lazy" onerror="this.closest('.pic').remove()"><div class="wm">© MEHTAB</div><div class="pic-text"><h4>${meta.title}</h4><p>${meta.location}</p></div><div class="info"><button onclick="openStory(this)">👁️</button><button onclick="openDown(this)">Free</button><button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button></div><div class="like-view-count" style="padding:10px"><button class="like-btn" onclick="handleLike('${photoId}', this)">👍 Like <span class="like-count">0</span></button> 👀 Views: <span class="view-count">0</span></div>`;
-      document.getElementById('mainGallery').prepend(div);
-      let old = JSON.parse(localStorage.getItem('mahtabGallery')||'[]'); old.push({url:data.secure_url, title:meta.title, location:meta.location, story:meta.story}); localStorage.setItem('mahtabGallery', JSON.stringify(old)); status.textContent = 'Uploaded! ✅'; setTimeout(()=>status.style.display='none',2000);
+      div.dataset.id = photoId;
+      div.dataset.title = meta.title; div.dataset.location = meta.location; div.dataset.story = meta.story;
+      div.innerHTML = `<img src="${data.secure_url}" loading="lazy" onerror="this.closest('.pic').remove()"><div class="wm">© MEHTAB</div><div class="pic-text"><h4>${meta.title}</h4><p>${meta.location}</p></div><div class="info"><div class="stats-row"><button onclick="openStory(this)">👁️ Story</button><button onclick="openDown(this)">Free</button><button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button></div><div class="stats-row"><button class="like-btn" onclick="handleLike('${photoId}', this)">❤️ <span class="like-count">0</span></button><span class="stats-text">👀 <span class="view-count">0</span></span></div></div>`;
+      document.getElementById('mainGallery').prepend(div); let old = JSON.parse(localStorage.getItem('mahtabGallery')||'[]'); old.push({url:data.secure_url, title:meta.title, location:meta.location, story:meta.story}); localStorage.setItem('mahtabGallery', JSON.stringify(old)); status.textContent = 'Uploaded! ✅'; setTimeout(()=>status.style.display='none',2000);
     }
   }catch(err){ status.textContent = 'Failed'; }
 }
@@ -150,50 +152,41 @@ async function uploadToCloudinary(file, meta){
 
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
-
   let userId = localStorage.getItem('userId');
   if(!userId){ userId = crypto.randomUUID(); localStorage.setItem('userId', userId); }
 
-  // Har photo ke liye count load karo
   setTimeout(() => {
     document.querySelectorAll('.pic').forEach(pic => {
       const photoId = pic.dataset.id;
       if(!photoId) return;
-
       const likeRef = ref(db, 'photoLikes/' + photoId);
       const viewRef = ref(db, 'photoViews/' + photoId);
       const userLikeRef = ref(db, 'userPhotoLikes/' + photoId + '/' + userId);
 
-      // VIEW +1
       runTransaction(viewRef, (current) => { return (current || 0) + 1; });
 
-      // COUNT UPDATE
       onValue(likeRef, (snapshot) => {
         pic.querySelector('.like-count').innerText = snapshot.val() || 0;
       });
       onValue(viewRef, (snapshot) => {
         pic.querySelector('.view-count').innerText = snapshot.val() || 0;
       });
-
-      // LIKE CHECK
       onValue(userLikeRef, (snapshot) => {
         if(snapshot.val() === true){
           const btn = pic.querySelector('.like-btn');
-          btn.innerHTML = `👍 Liked <span class="like-count">${pic.querySelector('.like-count').innerText}</span>`;
+          btn.innerHTML = `❤️ Liked <span class="like-count">${pic.querySelector('.like-count').innerText}</span>`;
           btn.disabled = true;
         }
       });
     });
-  }, 1000); // 1 sec baad taake pics load ho jayen
+  }, 1000);
 
-  // Global function for button
   window.handleLike = function(photoId, btn){
     const likeRef = ref(db, 'photoLikes/' + photoId);
     const userLikeRef = ref(db, 'userPhotoLikes/' + photoId + '/' + userId);
     runTransaction(likeRef, (current) => { return (current || 0) + 1; });
     set(userLikeRef, true);
   }
-
 </script>
 </body>
 </html>
