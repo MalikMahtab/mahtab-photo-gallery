@@ -188,5 +188,29 @@ async function uploadToCloudinary(file, meta){
     set(userLikeRef, true);
   }
 </script>
+  <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBZZRoFsd5ECqwcjvIgYPfRrOKaGtr8-ak",
+    authDomain: "my-website-likes-a49e9.firebaseapp.com",
+    databaseURL: "https://my-website-likes-a49e9-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "my-website-likes-a49e9",
+    storageBucket: "my-website-likes-a49e9.firebasestorage.app",
+    messagingSenderId: "642704402316",
+    appId: "1:642704402316:web:d6c0645e85fadfb18618a9",
+    measurementId: "G-MWM7NQ045W"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
 </body>
 </html>
