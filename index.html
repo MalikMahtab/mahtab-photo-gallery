@@ -17,11 +17,12 @@
 .wm{position:absolute;bottom:12px;left:12px;font-size:10px;opacity:0.6;z-index:2}
 .pic-text{position:absolute;bottom:0;left:0;right:0;padding:18px 15px 12px;background:linear-gradient(to top, rgba(0,0,0,0.95), transparent);opacity:0;transition:0.4s;z-index:2}
 .pic:hover .pic-text{opacity:1}
-.pic.active.pic-text{opacity:1}
+.pic.active .pic-text{opacity:1}
 .pic-text h4{font-size:13px;letter-spacing:1px}.pic-text p{font-size:11px;color:#aaa}
-.info{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.8);background:rgba(0,0,0,0.6);backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.15);padding:10px 12px;border-radius:100px;display:flex;gap:6px;opacity:0;transition:0.4s;pointer-events:none;z-index:3;align-items:center}
-.pic.active .info{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:all}
+.info{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.8);background:rgba(0,0,0,0.6);backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.15);padding:10px 12px;border-radius:100px;display:flex;gap:6px;opacity:0;transition:0.4s;pointer-events:none;z-index:3;align-items:center;flex-wrap:wrap;justify-content:center}
+.pic.active.info{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:all}
 .info button{background:white;color:black;border:none;padding:8px 12px;border-radius:100px;cursor:pointer;font-size:11px;font-weight:600}.paid-btn{background:#00ff88!important;color:#000!important;padding:8px 14px;border-radius:100px;font-size:11px;font-weight:700;text-decoration:none;border:none;cursor:pointer}
+.del-btn{background:#ff3c00!important;color:#fff!important} /* delete button */
 .stats-pill{display:flex;justify-content:space-between;align-items:center;background:rgba(18,18,18,0.7);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08);margin:8px;padding:8px 14px;border-radius:100px;font-size:11px}
 .like-pill{display:flex;align-items:center;gap:6px;background:rgba(255,60,0,0.1);padding:5px 12px;border-radius:100px;cursor:pointer;border:1px solid rgba(255,60,0,0.2);transition:0.3s}
 .like-pill:hover{background:rgba(255,60,0,0.2)}
@@ -73,36 +74,7 @@ document.addEventListener('click', function(e){
 document.addEventListener('error', function(e){
   if(e.target.tagName === 'IMG'){ let p=e.target.closest('.pic'); if(p) p.remove(); }
 }, true);
-(function(){
-  let saved = JSON.parse(localStorage.getItem('mahtabGallery')||'[]');
-  let galleryDiv = document.getElementById('mainGallery');
-  saved = saved.filter(p => p.url && p.url.startsWith('http'));
-  localStorage.setItem('mahtabGallery', JSON.stringify(saved));
-  saved.reverse().forEach((p, index)=>{
-    let wrapper = document.createElement('div');
-    let photoId = 'photo_' + index;
-    wrapper.innerHTML = `
-    <div class="pic" data-id="${photoId}" data-title="${p.title}" data-location="${p.location}" data-story="${p.story}">
-      <img src="${p.url}" loading="lazy" onerror="this.closest('.pic').remove()">
-      <div class="wm">© MEHTAB</div>
-      <div class="pic-text"><h4>${p.title}</h4><p>${p.location}</p></div>
-      <div class="info">
-        <button onclick="openStory(this)">👁️ Story</button>
-        <button onclick="openDown(this)">Free</button>
-        <button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button>
-      </div>
-    </div>
-    <div class="stats-pill">
-      <div class="like-pill" onclick="handleLike('${photoId}', this)">
-        <span>❤️</span> <span class="like-count">0</span>
-      </div>
-      <div class="view-pill">
-        <span>👁️</span> <span class="view-count">0</span>
-      </div>
-    </div>`;
-    galleryDiv.prepend(wrapper);
-  });
-})();
+
 const cloudInput = document.createElement('input'); cloudInput.type = 'file'; cloudInput.accept = 'image/*'; cloudInput.multiple = true; cloudInput.style.display = 'none'; document.body.appendChild(cloudInput);
 const upBtn = document.createElement('div'); upBtn.className = 'admin-upload-wrap'; upBtn.innerHTML = `<div id="uploadStatus"></div><button id="realUpBtn"><span class="up-icon">↗</span> UPLOAD</button>`; document.body.appendChild(upBtn);
 document.getElementById('realUpBtn').onclick = ()=> { if(!checkAdmin()) return; cloudInput.click(); };
@@ -113,90 +85,30 @@ async function uploadToCloudinary(file, meta){
   const fd = new FormData(); fd.append('file', file); fd.append('upload_preset', UPLOAD_PRESET); fd.append('folder', 'mahtab_gallery');
   try{ const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method:'POST', body:fd }); const data = await res.json();
     if(data.secure_url){
-      let photoId = 'photo_' + Date.now();
-      let wrapper = document.createElement('div');
-      wrapper.innerHTML = `
-      <div class="pic" data-id="${photoId}" data-title="${meta.title}" data-location="${meta.location}" data-story="${meta.story}">
-        <img src="${data.secure_url}" loading="lazy" onerror="this.closest('.pic').remove()">
-        <div class="wm">© MEHTAB</div>
-        <div class="pic-text"><h4>${meta.title}</h4><p>${meta.location}</p></div>
-        <div class="info">
-          <button onclick="openStory(this)">👁️ Story</button>
-          <button onclick="openDown(this)">Free</button>
-          <button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button>
-        </div>
-      </div>
-      <div class="stats-pill">
-        <div class="like-pill" onclick="handleLike('${photoId}', this)">
-          <span>❤️</span> <span class="like-count">0</span>
-        </div>
-        <div class="view-pill">
-          <span>👁️</span> <span class="view-count">0</span>
-        </div>
-      </div>`;
-      document.getElementById('mainGallery').prepend(wrapper);
-      let old = JSON.parse(localStorage.getItem('mahtabGallery')||'[]'); old.push({url:data.secure_url, title:meta.title, location:meta.location, story:meta.story}); localStorage.setItem('mahtabGallery', JSON.stringify(old)); status.textContent = 'Uploaded! ✅'; setTimeout(()=>status.style.display='none',2000);
-    }
+      const photoId = 'photo_' + Date.now();
+      saveToFirebase(photoId, data.secure_url, meta);
+      status.textContent = 'Uploaded! ✅'; setTimeout(()=>status.style.display='none',2000);
+    } else { status.textContent = 'Failed'; }
   }catch(err){ status.textContent = 'Failed'; }
+}
+
+function deletePhoto(key, photoId){
+  if(!checkAdmin()) return;
+  if(confirm("Pakka delete karni hai?")){
+    const photoRef = ref(db, 'gallery/' + key);
+    remove(photoRef);
+    const likeRef = ref(db, 'photoLikes/' + photoId);
+    const viewRef = ref(db, 'photoViews/' + photoId);
+    remove(likeRef); remove(viewRef);
+  }
 }
 </script>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, onValue, runTransaction, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-  const firebaseConfig = {
-    apiKey: "AIzaSyBZZRoFsd5ECqwcjvIgYPfRrOKaGtr8-ak",
-    authDomain: "my-website-likes-a49e9.firebaseapp.com",
-    databaseURL: "https://my-website-likes-a49e9-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "my-website-likes-a49e9",
-    storageBucket: "my-website-likes-a49e9.firebasestorage.app",
-    messagingSenderId: "642704402316",
-    appId: "1:642704402316:web:d6c0645e85fadfb18618a9"
-  };
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  let userId = localStorage.getItem('userId');
-  if(!userId){ userId = crypto.randomUUID(); localStorage.setItem('userId', userId); }
-  setTimeout(() => {
-    document.querySelectorAll('.pic').forEach(pic => {
-      const photoId = pic.dataset.id;
-      if(!photoId) return;
-      const likeRef = ref(db, 'photoLikes/' + photoId);
-      const viewRef = ref(db, 'photoViews/' + photoId);
-      const userLikeRef = ref(db, 'userPhotoLikes/' + photoId + '/' + userId);
-      runTransaction(viewRef, (current) => { return (current || 0) + 1; });
-      onValue(likeRef, (snapshot) => {
-        pic.nextElementSibling.querySelector('.like-count').innerText = snapshot.val() || 0;
-      });
-      onValue(viewRef, (snapshot) => {
-        pic.nextElementSibling.querySelector('.view-count').innerText = snapshot.val() || 0;
-      });
-      onValue(userLikeRef, (snapshot) => {
-        if(snapshot.val() === true){
-          const pill = pic.nextElementSibling.querySelector('.like-pill');
-          pill.classList.add('liked');
-          pill.innerHTML = `<span>❤️</span> Liked <span class="like-count">${pic.nextElementSibling.querySelector('.like-count').innerText}</span>`;
-        }
-      });
-    });
-  }, 1000);
-  window.handleLike = function(photoId, pill){
-    if(pill.classList.contains('liked')) return;
-    const likeRef = ref(db, 'photoLikes/' + photoId);
-    const userLikeRef = ref(db, 'userPhotoLikes/' + photoId + '/' + userId);
-    runTransaction(likeRef, (current) => { return (current || 0) + 1; });
-    set(userLikeRef, true);
-  }
-</script>
-  <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+  import { getDatabase, ref, onValue, runTransaction, set, push, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
   const firebaseConfig = {
     apiKey: "AIzaSyBZZRoFsd5ECqwcjvIgYPfRrOKaGtr8-ak",
     authDomain: "my-website-likes-a49e9.firebaseapp.com",
@@ -208,9 +120,81 @@ async function uploadToCloudinary(file, meta){
     measurementId: "G-MWM7NQ045W"
   };
 
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
+  const db = getDatabase(app);
+
+  let userId = localStorage.getItem('userId');
+  if(!userId){ userId = crypto.randomUUID(); localStorage.setItem('userId', userId); }
+
+  // FIREBASE SE GALLERY LOAD
+  const galleryRef = ref(db, 'gallery');
+  onValue(galleryRef, (snapshot) => {
+    const galleryDiv = document.getElementById('mainGallery');
+    galleryDiv.innerHTML = '';
+    const data = snapshot.val();
+    if(data){
+      Object.entries(data).reverse().forEach(([key, p])=>{
+        let photoId = p.id;
+        let wrapper = document.createElement('div');
+        wrapper.innerHTML = `
+        <div class="pic" data-key="${key}" data-id="${photoId}" data-title="${p.title}" data-location="${p.location}" data-story="${p.story}">
+          <img src="${p.url}" loading="lazy" onerror="this.closest('.pic').remove()">
+          <div class="wm">© MEHTAB</div>
+          <div class="pic-text"><h4>${p.title}</h4><p>${p.location}</p></div>
+          <div class="info">
+            <button onclick="openStory(this)">👁️ Story</button>
+            <button onclick="openDown(this)">Free</button>
+            <button class="paid-btn" onclick="openPay(this)">4K - 5 PKR</button>
+            ${isAdmin? `<button class="del-btn" onclick="deletePhoto('${key}', '${photoId}')">🗑️ Delete</button>` : ''}
+          </div>
+        </div>
+        <div class="stats-pill">
+          <div class="like-pill" onclick="handleLike('${photoId}', this)">
+            <span>❤️</span> <span class="like-count">0</span>
+          </div>
+          <div class="view-pill">
+            <span>👁️</span> <span class="view-count">0</span>
+          </div>
+        </div>`;
+        galleryDiv.prepend(wrapper);
+
+        // Likes and Views
+        const likeRef = ref(db, 'photoLikes/' + photoId);
+        const viewRef = ref(db, 'photoViews/' + photoId);
+        const userLikeRef = ref(db, 'userPhotoLikes/' + photoId + '/' + userId);
+        runTransaction(viewRef, (current) => { return (current || 0) + 1; });
+        onValue(likeRef, (snap) => {
+          if(wrapper.querySelector('.like-count')) wrapper.querySelector('.like-count').innerText = snap.val() || 0;
+        });
+        onValue(viewRef, (snap) => {
+          if(wrapper.querySelector('.view-count')) wrapper.querySelector('.view-count').innerText = snap.val() || 0;
+        });
+        onValue(userLikeRef, (snap) => {
+          if(snap.val() === true){
+            const pill = wrapper.querySelector('.like-pill');
+            if(pill){ pill.classList.add('liked'); pill.innerHTML = `<span>❤️</span> Liked <span class="like-count">${wrapper.querySelector('.like-count').innerText}</span>`; }
+          }
+        });
+      });
+    }
+  });
+
+  window.handleLike = function(photoId, pill){
+    if(pill.classList.contains('liked')) return;
+    const likeRef = ref(db, 'photoLikes/' + photoId);
+    const userLikeRef = ref(db, 'userPhotoLikes/' + photoId + '/' + userId);
+    runTransaction(likeRef, (current) => { return (current || 0) + 1; });
+    set(userLikeRef, true);
+  }
+
+  window.saveToFirebase = function(photoId, url, meta){
+    const galleryRef = ref(db, 'gallery');
+    push(galleryRef, {
+      id: photoId, url: url, title: meta.title, location: meta.location, story: meta.story
+    });
+  }
+
 </script>
 </body>
 </html>
